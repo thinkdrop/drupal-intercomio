@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function intercomio_uninstall() {
+  variable_del('intercomio_enabled');
+  variable_del('intercomio_app_id');
+  variable_del('intercomio_visibility_roles');
+  variable_del('intercomio_roles');
+  variable_del('intercomio_secure');
+  variable_del('intercomio_secure_key');
+  variable_del('intercomio_inbox_type');
+  variable_del('intercomio_inbox_label');
+  variable_del('intercomio_custom_data');
+}

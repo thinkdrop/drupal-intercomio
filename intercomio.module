@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function intercomio_menu() {
+  $items = array();
+
+  $items['admin/config/services/intercomio'] = array(
+    'title' => t('Intercom.io Configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('intercomio_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'intercomio.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_page_alter().
+ *
+ * Inserts JavaScript to the appropriate scope/region of the page.
+ */
+function intercomio_page_alter(&$page) {
+  global $user;
+  if ($user->uid && ($app_id = variable_get('intercomio_app_id', '')) && variable_get('intercomio_enabled', TRUE)) {
+    $roles = variable_get('intercomio_roles', array());
+    $match = FALSE;
+    $roles = array_filter($roles);
+    if (!empty($roles)) {
+      foreach ($roles as $rid) {
+        if (in_array($rid, array_keys($user->roles))) {
+          $match = TRUE;
+          break;
+        }
+      }
+
+      if (variable_get('intercomio_visibility_roles')) {
+        $track = !$match;
+      }
+      else {
+        $track = $match;
+      }
+    }
+    else {
+      $track = TRUE;
+    }
+
+    if ($track) {
+      $page['page_bottom']['intercomio'] = array(
+        '#markup' => _intercomio_get_script($user, $app_id),
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_intercomio_custom_data_info().
+ */
+function intercomio_intercomio_custom_data_info() {
+  $data = array();
+  foreach (user_roles(TRUE) as $rid => $role) {
+    if ($role == 'authenticated user') continue;
+    $data['role_' . str_replace(' ', '_', $role)] = t('Send membership information for role %role', array('%role' => $role));
+  }
+  return $data;
+}
+
+/**
+ * Implements hook_intercomio_custom_data().
+ */
+function intercomio_intercomio_custom_data($keys) {
+  global $user;
+  $data = array();
+  foreach (user_roles(TRUE) as $rid => $role) {
+    foreach ($keys as $key) {
+      if ($key === 'role_' . str_replace(' ', '_', $role)) {
+        $data[$key] = in_array($rid, array_keys($user->roles));
+      }
+    }
+  }
+
+  return $data;
+}
+
+/**
+ * Get custom data settings.
+ *
+ * @see hook_intercomio_custom_data_info
+ * @see hook_intercomio_custom_data
+ */
+function intercomio_custom_data_settings() {
+  $custom_data = array();
+  foreach (module_implements('intercomio_custom_data_info') as $module) {
+    foreach (module_invoke($module, 'intercomio_custom_data_info') as $key => $label) {
+      $custom_data[$key] = $label;
+    }
+  }
+  return $custom_data;
+}
+
+/**
+ * Return the javascript needed for intercom.io.
+ *
+ * I don't believe this can be done in a drupal_add_js call as
+ * drupal doesn't support addding an 'id' attribute to the script tag.
+ */
+function _intercomio_get_script($account, $app_id) {
+  $intercom_settings = array(
+    'app_id' => $app_id,
+    'user_id' => $account->uid,
+    'email' => $account->mail,
+    'created_at' => $account->created
+  );
+
+  $custom_data = array();
+  $custom_data += module_invoke_all('intercomio_custom_data', variable_get('intercomio_custom_data', array()));
+  if (!empty($custom_data)) {
+    $intercom_settings['custom_data'] = $custom_data;
+  }
+
+  if (variable_get('intercomio_secure') && $secure_key = variable_get('intercomio_secure_key')) {
+    $intercom_settings['user_hash'] = sha1($secure_key . $account->uid);
+  }
+
+  if ($inbox_type = variable_get('intercomio_inbox_type')) {
+    if ($inbox_type == 'simple') {
+      $intercom_settings['widget'] = array(
+        'activator' => '#IntercomDefaultWidget',
+      );
+      if ($label = variable_get('intercomio_inbox_label')) {
+        $intercom_settings['widget']['label'] = $label;
+      }
+    }
+    elseif ($inbox_type == 'advanced') {
+      $intercom_settings['widget'] = array(
+        'activator' => '#IntercomDefaultWidget',
+        'use_counter' => TRUE,
+        'activator_html' => 'function (obj) { return obj.activator_html_functions.brackets(); }',
+      );
+    }
+  }
+
+  $output = "<script id=\"IntercomSettingsScriptTag\">
+      var intercomSettings = " . drupal_json_encode($intercom_settings)  . "
+    </script>
+    <script>
+      (function() {
+        function async_load() {
+          var s = document.createElement('script');
+          s.type = 'text/javascript'; s.async = true;
+          s.src = 'https://api.intercom.io/api/js/library.js';
+          var x = document.getElementsByTagName('script')[0];
+          x.parentNode.insertBefore(s, x);
+        }
+        if (window.attachEvent) {
+          window.attachEvent('onload', async_load);
+        } else {
+          window.addEventListener('load', async_load, false);
+        }
+      })();
+    </script>";
+  return $output;
+}
