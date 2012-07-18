@@ -48,7 +48,7 @@ function intercomio_page_alter(&$page) {
     }
 
     if ($track) {
-      $page['page_bottom']['intercomio'] = array(
+      $page['bottom']['intercomio'] = array(
         '#markup' => _intercomio_get_script($user, $app_id),
       );
     }
