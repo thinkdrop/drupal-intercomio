@@ -39,6 +39,18 @@ function intercomio_admin_form() {
     '#default_value' => variable_get('intercomio_roles', array()),
   );
 
+  $form['intercomio_region_settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Region'),
+  );
+
+  $form['intercomio_region_settings']['intercomio_region'] = array(
+    '#type' => 'select',
+    '#title' => t('Region'),
+    '#options' => system_region_list(variable_get('theme_default'), $show = REGIONS_ALL),
+    '#default_value' => variable_get('intercomio_region'),
+  );
+
   $form['intercomio_secure_mode'] = array(
     '#type' => 'fieldset',
     '#title' => t('Secure mode'),
