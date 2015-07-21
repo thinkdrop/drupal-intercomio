@@ -1,5 +1,12 @@
 <?php
+/**
+ * @file
+ * Admin page callbacks for intercomio module.
+ */
 
+/**
+ * Menu callback; Display settings form for intercom.io integration.
+ */
 function intercomio_admin_form() {
   $form = array();
 
@@ -104,6 +111,11 @@ function intercomio_admin_form() {
   return $form;
 }
 
+/**
+ * Submit handler for intercomio_admin_form.
+ *
+ * @see intercomio_admin_form().
+ */
 function intercomio_admin_form_submit(&$form, &$form_state) {
   // Remove unchecked values from the settings array
   $custom_data = array_filter($form_state['values']['intercomio_custom_data']);

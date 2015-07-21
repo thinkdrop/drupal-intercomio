@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Intercom.io integration.
+ */
 
 /**
  * Implements hook_menu().
