@@ -114,6 +114,7 @@ function _intercomio_get_script($account, $app_id) {
   $intercom_settings = array(
     'app_id' => $app_id,
     'user_id' => $account->uid,
+    'name' => $account->name,
     'email' => $account->mail,
     'created_at' => $account->created
   );
