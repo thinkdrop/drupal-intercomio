@@ -49,6 +49,7 @@ function intercomio_admin_form() {
   $form['intercomio_region_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Region'),
+    '#description' => t('Choose which region you would like the Intercom.io JavaScript tracking code to be inserted into.'),
   );
 
   $form['intercomio_region_settings']['intercomio_region'] = array(
@@ -117,7 +118,7 @@ function intercomio_admin_form() {
  * @see intercomio_admin_form().
  */
 function intercomio_admin_form_submit(&$form, &$form_state) {
-  // Remove unchecked values from the settings array
+  // Remove unchecked values from the settings array.
   $custom_data = array_filter($form_state['values']['intercomio_custom_data']);
   variable_set('intercomio_custom_data', $custom_data);
 }
