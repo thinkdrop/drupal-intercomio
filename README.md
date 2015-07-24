@@ -43,3 +43,69 @@ This will download the required Composer libraries to your sites/all/libraries
 folder, and you can then include them in your project. Alternately you can view
 the status of managed composer libraries, and re-build your global composer.json
 file at `admin/config/system/composer-manager`.
+
+## Logging Events
+
+One of the most common things you'll want to do with the Intercom.io API is log
+events for users of your site. For example, when someone logs in, or when they
+perform any specific action on the site.
+
+### Logging Events with Triggers
+
+This module provides an action for logging events. This action can be configured
+at `admin/config/system/actions`, and triggered using the Trigger module at
+`admin/structure/trigger/node`, via Views Bulk Operations, or anything else that
+can trigger events.
+
+Example: Log an event named, "Left a comment" in Intercom.io every time someone
+leaves a comment on your blog.
+
+### Logging Events with Custom Code
+
+This module provides a suite of tools to aid in logging events directly via PHP.
+
+Here's an example of logging a "Logged in" event for a user.
+
+```php
+/**
+ * Implements hook_user_login().
+ */
+function intercomio_user_login(&$edit, $account) {
+  $controller = intercomio_get_controller();
+  $controller->createEvent($account, ['event_name' => 'Logged in']);
+}
+```
+
+For more about the information that can be included with an event see the
+documentation for the Drupal\intercomio\IntercomioController::createEvent()
+method, and the official API documentation https://doc.intercom.io/api/#event-model
+
+## Tagging Users
+
+Intercom.io allows you to apply one or more tags to a user in order to segment
+your list. https://doc.intercom.io/api/#tags
+
+### Tagging Users with Triggers
+
+This module provides actions for adding and removing tags. These actions can be
+configured at `admin/config/system/actions` and then triggered using the
+Trigger module at `admin/structure/trigger/node` or with Views Bulk Operations,
+or any other module that can trigger actions.
+
+Example: Tag all users in the administrator role.
+
+### Tagging Users with Custom Code
+
+If you would like to tag users based on actions in your own code follow the
+example below and read the documentation for the Drupal\intercomio\IntercomioController::tagUsers()
+method.
+
+```php
+function mymodule_awesome_function($account) {
+  $controller = intercomio_get_controller();
+  $users = array(
+    array('email' => $account->mail),
+  );
+  $controller->tagUsers('Awesome', $users);
+}
+```

@@ -4,7 +4,10 @@
  * Intercom.io integration.
  */
 
+require_once 'intercomio.actions.inc';
+
 use Intercom\IntercomBasicAuthClient;
+use Drupal\intercomio\IntercomioController;
 
 /**
  * Implements hook_menu().
@@ -60,6 +63,19 @@ function intercomio_get_client() {
   }
 
   return FALSE;
+}
+
+/**
+ * Initialize and return a copy of the IntercomioController.
+ *
+ * Use this to retrieve a controller for logging events, creating users, and
+ * tagging users.
+ *
+ * @return IntercomioController
+ */
+function intercomio_get_controller() {
+  $intercom = intercomio_get_client();
+  return new IntercomioController($intercom);
 }
 
 /**
