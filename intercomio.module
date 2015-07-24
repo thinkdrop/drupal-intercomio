@@ -4,6 +4,8 @@
  * Intercom.io integration.
  */
 
+use Intercom\IntercomBasicAuthClient;
+
 /**
  * Implements hook_menu().
  */
@@ -18,7 +20,46 @@ function intercomio_menu() {
     'file' => 'intercomio.admin.inc',
   );
 
+  $items['admin/config/services/intercomio/settings'] = array(
+    'title' => t('Intercom.io Configuration'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('intercomio_admin_form'),
+    'access arguments' => array('access administration pages'),
+    'file' => 'intercomio.admin.inc',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
   return $items;
+}
+
+/**
+ * Initialize and retrieve a copy of the Intercom.io API client.
+ *
+ * This function verifies that sufficient configuration data exists, and then
+ * instantiates a copy of the Intercom\IntercomBasicAuthClient client with the
+ * provided API key and App ID and returns it.
+ *
+ * This object gives you complete access to the Intercom.io API.
+ * @link https://doc.intercom.io/api/
+ * @link https://github.com/intercom/intercom-php
+ *
+ * @return \Guzzle\Service\Client|IntercomBasicAuthClient
+ */
+function intercomio_get_client() {
+  if (!class_exists('Intercom\IntercomBasicAuthClient')) {
+    watchdog('intercomio', 'The Intercom\IntercomBasicAuthClient class is missing. Try running `drush composer-rebuild` and `drush composer-manager update` to update your vendor directory.');
+    return FALSE;
+  }
+
+  if (($app_id = variable_get('intercomio_app_id', '')) && ($api_key = variable_get('intercomio_api_key', '')) && variable_get('intercomio_enabled', TRUE)) {
+    $intercom = IntercomBasicAuthClient::factory(array(
+      'app_id' => $app_id,
+      'api_key' => $api_key,
+    ));
+    return $intercom;
+  }
+
+  return FALSE;
 }
 
 /**
@@ -28,6 +69,7 @@ function intercomio_menu() {
  */
 function intercomio_page_alter(&$page) {
   global $user;
+
   if ($user->uid && ($app_id = variable_get('intercomio_app_id', '')) && variable_get('intercomio_enabled', TRUE)) {
     $roles = variable_get('intercomio_roles', array());
     $match = FALSE;

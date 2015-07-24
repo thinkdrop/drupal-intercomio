@@ -3,3 +3,7 @@ description = Integration with the intercom.io web service.
 core = 7.x
 package = Other
 configure = admin/config/services/intercomio
+
+dependencies[] = composer_manager
+
+files[] = src/IntercomioController.php

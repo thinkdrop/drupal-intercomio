@@ -20,7 +20,14 @@ function intercomio_admin_form() {
     '#type' => 'textfield',
     '#title' => t('App ID'),
     '#description' => t('Enter your Intercom.io app id here.'),
-    '#default_value' => variable_get('intercomio_app_id'),
+    '#default_value' => variable_get('intercomio_app_id', ''),
+  );
+
+  $form['intercomio_api_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('API Key'),
+    '#description' => t('Enter your Intercom.io API key here. <a href="https://doc.intercom.io/api/#authorization">https://doc.intercom.io/api/#authorization</a>'),
+    '#default_value' => variable_get('intercomio_api_key', ''),
   );
 
   $form['intercomio_role_settings'] = array(

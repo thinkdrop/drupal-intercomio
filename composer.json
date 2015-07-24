@@ -1,0 +1,25 @@
+{
+  "name": "drupal/intercomio",
+  "description": "Provides Intercom.io integration for Drupal.",
+  "license": "GPL-2.0",
+  "authors": [
+    {
+      "name": "Scott Hadfield"
+    },
+    {
+      "name": "Tim Eisenhuth"
+    },
+    {
+      "name": "Joe Shindelar",
+      "email": "eojthebrave@gmail.com"
+    }
+  ],
+  "require": {
+    "intercom/intercom-php": "1.1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Drupal\\amazons3\\": "src/"
+    }
+  }
+}

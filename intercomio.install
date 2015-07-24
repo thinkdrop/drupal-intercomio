@@ -10,6 +10,7 @@
 function intercomio_uninstall() {
   variable_del('intercomio_enabled');
   variable_del('intercomio_app_id');
+  variable_del('intercomio_api_key');
   variable_del('intercomio_visibility_roles');
   variable_del('intercomio_roles');
   variable_del('intercomio_secure');
