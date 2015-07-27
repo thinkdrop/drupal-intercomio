@@ -110,7 +110,7 @@ function intercomio_page_alter(&$page) {
     }
 
     if ($track) {
-      $page[variable_get('intercomio_region', 'content')]['intercomio'] = array(
+      $page[variable_get('intercomio_region', 'page_bottom')]['intercomio'] = array(
         '#markup' => _intercomio_get_script($user, $app_id),
       );
     }
