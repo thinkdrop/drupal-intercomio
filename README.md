@@ -60,6 +60,33 @@ can trigger events.
 Example: Log an event named, "Left a comment" in Intercom.io every time someone
 leaves a comment on your blog.
 
+### Logging Events with Client Side JavaScript
+
+This module adds the Intercom.io tracking JavaScript to every page requests As
+such, you can write custom event tracking JavaScript in either a module or a
+theme to do things like for example: Log an event on Intercom.io when a user
+clicks the play button for a podcast.
+
+More about the Intercom.io JavaScript API is available here:
+http://docs.intercom.io/install-on-your-web-product/intercom-javascript-api
+
+A simple Drupal example:
+
+```js
+(function ($, Intercom) {
+  Drupal.behaviors.trackEvent = {
+    attach: function() {
+      $('a.podcast-play').click(function() {
+        var metadata = {
+          podcast_title: 'Example Podcast',
+        };
+        Intercom('trackEvent', 'played-podcast', metadata);
+      });
+    }
+  }
+})(jQuery, Intercom);
+```
+
 ### Logging Events with Custom Code
 
 This module provides a suite of tools to aid in logging events directly via PHP.
