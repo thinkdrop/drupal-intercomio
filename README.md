@@ -22,7 +22,7 @@ https://www.drupal.org/node/2405805.
 Most of the module's configuration can be handled at `admin/config/services/intercomio`.
 At a minimum you'll need an http://intercom.io App ID and API Key in order to
 start tracking customer data. Both can be obtained by signing in to Intercom.io
-and looking under the "Intergrations" settings for your application.
+and looking under the "Integrations" settings for your application.
 
 ## Updating
 
