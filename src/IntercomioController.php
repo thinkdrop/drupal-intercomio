@@ -107,8 +107,7 @@ class IntercomioController {
     try {
       // You can't log an event to a user that doesn't exist. So lets confirm
       // that the user is valid first.
-      $this->createUser(['email' => $event['email']]);
-
+      $this->createUser(['email' => $event['email'], 'user_id' => $event['user_id']]);
       $response = $this->api_client->createEvent($event);
       return $response;
     }
