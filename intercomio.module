@@ -169,10 +169,12 @@ function intercomio_custom_data_settings() {
  * drupal doesn't support addding an 'id' attribute to the script tag.
  */
 function _intercomio_get_script($account, $app_id) {
+  $account = user_load($account->uid);
+
   $intercom_settings = array(
     'app_id' => $app_id,
     'user_id' => $account->uid,
-    'name' => $account->name,
+    'name' => format_username($account),
     'email' => $account->mail,
     'created_at' => $account->created
   );
