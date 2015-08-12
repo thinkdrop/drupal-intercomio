@@ -71,11 +71,17 @@ function intercomio_get_client() {
  * Use this to retrieve a controller for logging events, creating users, and
  * tagging users.
  *
- * @return IntercomioController
+ * @return IntercomioController | FALSE
+ *   Returns an IntercomioController instance or FALSE if one could not be
+ *   created.
  */
 function intercomio_get_controller() {
   $intercom = intercomio_get_client();
-  return IntercomioController::create($intercom);
+  if ($intercom) {
+    return IntercomioController::create($intercom);
+  }
+
+  return FALSE;
 }
 
 /**
@@ -169,12 +175,10 @@ function intercomio_custom_data_settings() {
  * drupal doesn't support addding an 'id' attribute to the script tag.
  */
 function _intercomio_get_script($account, $app_id) {
-  $account = user_load($account->uid);
-
   $intercom_settings = array(
     'app_id' => $app_id,
     'user_id' => $account->uid,
-    'name' => format_username($account),
+    'name' => $account->name,
     'email' => $account->mail,
     'created_at' => $account->created
   );

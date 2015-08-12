@@ -70,7 +70,9 @@ function intercomio_action_log_event_submit($form, &$form_state) {
 function intercomio_action_log_event($user, $context = array()) {
   $event_name = check_plain($context['intercomio_event_name']);
   $controller = intercomio_get_controller();
-  $controller->createEvent($user, ['event_name' => $event_name]);
+  if ($controller) {
+    $controller->createEvent($user, ['event_name' => $event_name]);
+  }
 }
 
 /**
@@ -107,10 +109,12 @@ function intercomio_action_tag_users_submit($form, &$form_state) {
 function intercomio_action_tag_users($user, $context = array()) {
   $tag_name = check_plain($context['intercomio_tag']);
   $controller = intercomio_get_controller();
-  $users = array(
-    array('email' => $user->mail),
-  );
-  $controller->tagUsers($tag_name, $users);
+  if ($controller) {
+    $users = array(
+      array('email' => $user->mail),
+    );
+    $controller->tagUsers($tag_name, $users);
+  }
 }
 
 /**
@@ -139,8 +143,10 @@ function intercomio_action_untag_users_submit($form, &$form_state) {
 function intercomio_action_untag_users($user, $context = array()) {
   $tag_name = check_plain($context['intercomio_tag']);
   $controller = intercomio_get_controller();
-  $users = array(
-    array('email' => $user->mail),
-  );
-  $controller->untagUsers($tag_name, $users);
+  if ($controller) {
+    $users = array(
+      array('email' => $user->mail),
+    );
+    $controller->untagUsers($tag_name, $users);
+  }
 }
