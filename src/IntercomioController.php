@@ -7,6 +7,8 @@
 namespace Drupal\intercomio;
 
 use Intercom\IntercomBasicAuthClient;
+use Intercom\Exception\ServerErrorResponseException;
+use Intercom\Exception\ClientErrorResponseException;
 
 /**
  * Class IntercomioController
@@ -75,6 +77,10 @@ class IntercomioController {
       // @todo: Add better error handling.
       return FALSE;
     }
+    catch (ServerErrorResponseException $e) {
+      watchdog('intercomio', 'Unable to create Intercom.io user. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
+      return FALSE;
+    }
   }
 
   /**
@@ -113,6 +119,10 @@ class IntercomioController {
     }
     catch (ClientErrorResponseException $e) {
       watchdog('intercomio', 'Unable to log Intercom.io event @event for user @user', array('@event' => $event['name'], '@user' => $event['email']), WATCHDOG_WARNING);
+      return FALSE;
+    }
+    catch (ServerErrorResponseException $e) {
+      watchdog('intercomio', 'Unable to create Intercom.io event. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
       return FALSE;
     }
   }
@@ -157,6 +167,10 @@ class IntercomioController {
     }
     catch (ClientErrorResponseException $e) {
       watchdog('intercomio', 'Unable to tag/un-tag users in Intercom.io with tag @tag', array('@event' => $tag), WATCHDOG_WARNING);
+      return FALSE;
+    }
+    catch (ServerErrorResponseException $e) {
+      watchdog('intercomio', 'Unable to Intercom.io tag/un-tag user. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
       return FALSE;
     }
     return FALSE;
