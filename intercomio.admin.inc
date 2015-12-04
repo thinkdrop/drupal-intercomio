@@ -53,19 +53,6 @@ function intercomio_admin_form() {
     '#default_value' => variable_get('intercomio_roles', array()),
   );
 
-  $form['intercomio_region_settings'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Region'),
-    '#description' => t('Choose which region you would like the Intercom.io JavaScript tracking code to be inserted into.'),
-  );
-
-  $form['intercomio_region_settings']['intercomio_region'] = array(
-    '#type' => 'select',
-    '#title' => t('Region'),
-    '#options' => system_region_list(variable_get('theme_default'), REGIONS_ALL),
-    '#default_value' => variable_get('intercomio_region', 'page_bottom'),
-  );
-
   $form['intercomio_secure_mode'] = array(
     '#type' => 'fieldset',
     '#title' => t('Secure mode'),

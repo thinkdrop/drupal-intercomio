@@ -86,8 +86,6 @@ function intercomio_get_controller() {
 
 /**
  * Implements hook_page_alter().
- *
- * Inserts JavaScript to the appropriate scope/region of the page.
  */
 function intercomio_page_alter(&$page) {
   global $user;
@@ -116,9 +114,7 @@ function intercomio_page_alter(&$page) {
     }
 
     if ($track) {
-      $page[variable_get('intercomio_region', 'page_bottom')]['intercomio'] = array(
-        '#markup' => _intercomio_get_script($user, $app_id),
-      );
+      _intercomio_add_js($user, $app_id);
     }
   }
 }
@@ -174,11 +170,13 @@ function intercomio_custom_data_settings() {
  * I don't believe this can be done in a drupal_add_js call as
  * drupal doesn't support addding an 'id' attribute to the script tag.
  */
-function _intercomio_get_script($account, $app_id) {
+function _intercomio_add_js($account, $app_id) {
+  $account = user_load($account->uid);
+
   $intercom_settings = array(
     'app_id' => $app_id,
     'user_id' => $account->uid,
-    'name' => $account->name,
+    'name' => format_username($account),
     'email' => $account->mail,
     'created_at' => $account->created
   );
@@ -211,24 +209,21 @@ function _intercomio_get_script($account, $app_id) {
     }
   }
 
-  $output = "<script id=\"IntercomSettingsScriptTag\">
-      var intercomSettings = " . drupal_json_encode($intercom_settings)  . "
-    </script>
-    <script>
-      (function() {
-        function async_load() {
-          var s = document.createElement('script');
-          s.type = 'text/javascript'; s.async = true;
-          s.src = 'https://api.intercom.io/api/js/library.js';
-          var x = document.getElementsByTagName('script')[0];
-          x.parentNode.insertBefore(s, x);
-        }
-        if (window.attachEvent) {
-          window.attachEvent('onload', async_load);
-        } else {
-          window.addEventListener('load', async_load, false);
-        }
-      })();
-    </script>";
-  return $output;
+  $script = 'var intercomSettings = ' . drupal_json_encode($intercom_settings)  . ';' . PHP_EOL;
+  $script .= "
+  (function() {
+    function async_load() {
+      var s = document.createElement('script');
+      s.type = 'text/javascript'; s.async = true;
+      s.src = 'https://api.intercom.io/api/js/library.js';
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    }
+    if (window.attachEvent) {
+      window.attachEvent('onload', async_load);
+    } else {
+      window.addEventListener('load', async_load, false);
+    }
+  })();";
+  drupal_add_js($script, array('type' => 'inline', 'scope' => 'footer'));
 }

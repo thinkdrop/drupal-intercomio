@@ -19,3 +19,10 @@ function intercomio_uninstall() {
   variable_del('intercomio_inbox_label');
   variable_del('intercomio_custom_data');
 }
+
+/**
+ * Remove region setting that is no longer used when placing JS on the page.
+ */
+function intercomio_update_7001(&$sandbox) {
+  variable_del('intercomio_region');
+}
