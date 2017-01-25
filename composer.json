@@ -19,7 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Drupal\\amazons3\\": "src/"
+      "Drupal\\intercomio\\": "src/"
     }
   }
 }
