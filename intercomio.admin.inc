@@ -14,6 +14,14 @@ function intercomio_admin_form() {
     '#type' => 'checkbox',
     '#title' => t('Enable intercom.io tracking'),
     '#default_value' => variable_get('intercomio_enabled', TRUE),
+    '#description' => t('This serves as an on/off killswitch for any point of integration with the Intercom.io API including both JS tracking and REST API integration.'),
+  );
+
+  $form['intercomio_js_tracking_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Embed JavaScript tracking tag'),
+    '#default_value' => variable_get('intercomio_js_tracking_enabled', TRUE),
+    '#description' => t('Embed the Intercom.io JavaScript tracking tag in the footer of all pages.'),
   );
 
   $form['intercomio_app_id'] = array(

@@ -90,7 +90,7 @@ function intercomio_get_controller() {
 function intercomio_page_alter(&$page) {
   global $user;
 
-  if ($user->uid && ($app_id = variable_get('intercomio_app_id', '')) && variable_get('intercomio_enabled', TRUE)) {
+  if (variable_get('intercomio_js_tracking_enabled', TRUE) && variable_get('intercomio_enabled', TRUE) && $user->uid && ($app_id = variable_get('intercomio_app_id', ''))) {
     $roles = variable_get('intercomio_roles', array());
     $match = FALSE;
     $roles = array_filter($roles);
