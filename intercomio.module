@@ -6,7 +6,7 @@
 
 require_once 'intercomio.actions.inc';
 
-use Intercom\IntercomBasicAuthClient;
+use Intercom\IntercomClient;
 use Drupal\intercomio\IntercomioController;
 
 /**
@@ -43,22 +43,19 @@ function intercomio_menu() {
  * provided API key and App ID and returns it.
  *
  * This object gives you complete access to the Intercom.io API.
- * @link https://doc.intercom.io/api/
+ * @link https://developers.intercom.com/
  * @link https://github.com/intercom/intercom-php
  *
  * @return \Guzzle\Service\Client|IntercomBasicAuthClient
  */
 function intercomio_get_client() {
-  if (!class_exists('Intercom\IntercomBasicAuthClient')) {
-    watchdog('intercomio', 'The Intercom\IntercomBasicAuthClient class is missing. Try running `drush composer-rebuild` and `drush composer-manager update` to update your vendor directory.');
+  if (!class_exists('Intercom\IntercomClient')) {
+    watchdog('intercomio', 'The Intercom\IntercomClient class is missing. Try running `drush composer-rebuild` and `drush composer-manager update` to update your vendor directory.');
     return FALSE;
   }
 
-  if (($app_id = variable_get('intercomio_app_id', '')) && ($api_key = variable_get('intercomio_api_key', '')) && variable_get('intercomio_enabled', TRUE)) {
-    $intercom = IntercomBasicAuthClient::factory(array(
-      'app_id' => $app_id,
-      'api_key' => $api_key,
-    ));
+  if ($api_key = variable_get('intercomio_api_key', '')) {
+    $intercom = new IntercomClient($api_key, null);
     return $intercom;
   }
 

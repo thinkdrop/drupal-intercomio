@@ -20,9 +20,11 @@ https://www.drupal.org/node/2405805.
 ## Configuration
 
 Most of the module's configuration can be handled at `admin/config/services/intercomio`.
-At a minimum you'll need an http://intercom.io App ID and API Key in order to
-start tracking customer data. Both can be obtained by signing in to Intercom.io
-and looking under the "Integrations" settings for your application.
+At a minimum you'll need an http://intercom.io API Access Token in order to
+start tracking customer data. This can be obtained by signing in to Intercom.io
+and either generating a new access token, or retrieving your existing one.
+
+More about access tokens: https://developers.intercom.com/docs/personal-access-tokens
 
 ## Updating
 
@@ -68,7 +70,7 @@ theme to do things like for example: Log an event on Intercom.io when a user
 clicks the play button for a podcast.
 
 More about the Intercom.io JavaScript API is available here:
-http://docs.intercom.io/install-on-your-web-product/intercom-javascript-api
+https://developers.intercom.com/docs/intercom-javascript
 
 A simple Drupal example:
 
@@ -105,7 +107,7 @@ function intercomio_user_login(&$edit, $account) {
 
 For more about the information that can be included with an event see the
 documentation for the Drupal\intercomio\IntercomioController::createEvent()
-method, and the official API documentation https://doc.intercom.io/api/#event-model
+method, and the official API documentation https://developers.intercom.com/v2.0/reference#event-model
 
 ## Tagging Users
 

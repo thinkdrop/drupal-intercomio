@@ -6,14 +6,13 @@
 
 namespace Drupal\intercomio;
 
-use Intercom\IntercomBasicAuthClient;
-use Intercom\Exception\ServerErrorResponseException;
-use Intercom\Exception\ClientErrorResponseException;
+use Intercom\IntercomClient;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Class IntercomioController
  *
- * Wrapper for the Intercom\IntercomBasicAuthClient API client that can do
+ * Wrapper for the Intercom\IntercomClient API client that can do
  * things like static caching for API responses and provide Drupal aware error
  * handling.
  *
@@ -27,10 +26,10 @@ class IntercomioController {
   /**
    * Constructor.
    *
-   * @param IntercomBasicAuthClient $api_client
+   * @param IntercomClient $api_client
    *   Client object for making requests to the intercom.io API.
    */
-  public function __construct(IntercomBasicAuthClient $api_client) {
+  public function __construct(IntercomClient $api_client) {
     $this->api_client = $api_client;
   }
 
@@ -43,12 +42,12 @@ class IntercomioController {
    * Done this way to work better with Drupal 8's service container in the
    * future.
    *
-   * @param IntercomBasicAuthClient $api_client
+   * @param IntercomClient $api_client
    *   Client object for making requests to the intercom.io API.
    *
    * @return static
    */
-  public static function create(IntercomBasicAuthClient $api_client) {
+  public static function create(IntercomClient $api_client) {
     return new static($api_client);
   }
 
@@ -70,14 +69,10 @@ class IntercomioController {
    */
   public function createUser(array $data) {
     try {
-      $response = $this->api_client->createUser($data);
+      $response = $this->api_client->users->create($data);
       return $response;
     }
-    catch (ClientErrorResponseException $e) {
-      // @todo: Add better error handling.
-      return FALSE;
-    }
-    catch (ServerErrorResponseException $e) {
+    catch (GuzzleException $e) {
       watchdog('intercomio', 'Unable to create Intercom.io user. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
       return FALSE;
     }
@@ -114,14 +109,10 @@ class IntercomioController {
       // You can't log an event to a user that doesn't exist. So lets confirm
       // that the user is valid first.
       $this->createUser(['email' => $event['email'], 'user_id' => $event['user_id']]);
-      $response = $this->api_client->createEvent($event);
+      $response = $this->api_client->events->create($event);
       return $response;
     }
-    catch (ClientErrorResponseException $e) {
-      watchdog('intercomio', 'Unable to log Intercom.io event @event for user @user', array('@event' => $event['name'], '@user' => $event['email']), WATCHDOG_WARNING);
-      return FALSE;
-    }
-    catch (ServerErrorResponseException $e) {
+    catch (GuzzleException $e) {
       watchdog('intercomio', 'Unable to create Intercom.io event. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
       return FALSE;
     }
@@ -158,19 +149,15 @@ class IntercomioController {
         $this->createUser($user);
       }
 
-      $response = $this->api_client->tagUsers(array(
+      $response = $this->api_client->tags-tag(array(
         'name' => $tag,
         'users' => $users,
       ));
 
       return $response;
     }
-    catch (ClientErrorResponseException $e) {
-      watchdog('intercomio', 'Unable to tag/un-tag users in Intercom.io with tag @tag', array('@event' => $tag), WATCHDOG_WARNING);
-      return FALSE;
-    }
     catch (ServerErrorResponseException $e) {
-      watchdog('intercomio', 'Unable to Intercom.io tag/un-tag user. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
+      watchdog('intercomio', 'Unable to tag/un-tag user in Intercom.io. Server responded with @error', array('@error' => $e->getMessage()), WATCHDOG_WARNING);
       return FALSE;
     }
     return FALSE;
@@ -209,10 +196,10 @@ class IntercomioController {
 
     $this->admins = array();
     try {
-      $response = $this->api_client->getAdmins();
+      $response = $this->api_client->admins->getAdmins();
       $this->admins = $response['admins'];
     }
-    catch (ClientErrorResponseException $e) {
+    catch (GuzzleException $e) {
       // @todo: Add better error handling.
       return FALSE;
     }

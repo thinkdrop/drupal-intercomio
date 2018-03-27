@@ -27,14 +27,14 @@ function intercomio_admin_form() {
   $form['intercomio_app_id'] = array(
     '#type' => 'textfield',
     '#title' => t('App ID'),
-    '#description' => t('Enter your Intercom.io app id here.'),
+    '#description' => t('Enter your Intercom.io app id here. This is used when adding the Intercom.io JavaScript snippet.'),
     '#default_value' => variable_get('intercomio_app_id', ''),
   );
 
   $form['intercomio_api_key'] = array(
     '#type' => 'textfield',
     '#title' => t('API Key'),
-    '#description' => t('Enter your Intercom.io API key here. <a href="https://doc.intercom.io/api/#authorization">https://doc.intercom.io/api/#authorization</a>'),
+    '#description' => t('Enter your Intercom.io API access token here. <a href="https://developers.intercom.com/docs/personal-access-tokens">https://developers.intercom.com/docs/personal-access-tokens</a>. This is used to make calls to the Intercom.io REST API.'),
     '#default_value' => variable_get('intercomio_api_key', ''),
   );
 

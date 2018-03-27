@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "intercom/intercom-php": "1.1.1"
+    "intercom/intercom-php": "^3.1"
   },
   "autoload": {
     "psr-4": {
