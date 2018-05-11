@@ -1,5 +1,6 @@
 {
   "name": "drupal/intercomio",
+  "type": "drupal-module",
   "description": "Provides Intercom.io integration for Drupal.",
   "license": "GPL-2.0",
   "authors": [
